@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Prescription_Analysis extends StatefulWidget {
-  final int age;
+  final String age;
   final String patientName;
   final List<dynamic> patientData;
   final List<dynamic> healthData;

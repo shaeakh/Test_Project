@@ -58,7 +58,7 @@ class _Temp_Pa extends State<Temp_Pa> {
       MyApp.navigatorKey.currentState?.push(
         MaterialPageRoute(
           builder: (context) => Prescription_Analysis(
-            age: age,
+            age: age.toString() ,
             patientName: patientName,
             patientData: patientData,
             healthData: healthData,

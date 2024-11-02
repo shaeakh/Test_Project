@@ -22,23 +22,23 @@ class _Homepage extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 60), () {
-      showNotification(
-        title: "Emergency Alert",
-        body: "Your brother just fainted and fell to the floor.",
-        payload: {
-          "navigate": "true",
-        },
-        actionButtons: [
-          NotificationActionButton(
-            key: 'Otherpage',
-            label: "See Details",
-            actionType: ActionType.SilentAction,
-            color: Colors.deepPurple,
-          )
-        ],
-      );
-    });
+    // Future.delayed(Duration(seconds: 60), () {
+    //   showNotification(
+    //     title: "Emergency Alert",
+    //     body: "Your brother just fainted and fell to the floor.",
+    //     payload: {
+    //       "navigate": "true",
+    //     },
+    //     actionButtons: [
+    //       NotificationActionButton(
+    //         key: 'Otherpage',
+    //         label: "See Details",
+    //         actionType: ActionType.SilentAction,
+    //         color: Colors.deepPurple,
+    //       )
+    //     ],
+    //   );
+    // });
   }
 
   Widget build(BuildContext context) {
