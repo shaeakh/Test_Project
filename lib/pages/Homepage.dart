@@ -139,9 +139,9 @@ class _Homepage extends State<Homepage> {
               ElevatedButton.icon(
                 onPressed: () {
                   // take a picture and navigate to another page
-                  MyApp.navigatorKey.currentState?.push(MaterialPageRoute(
-                    builder: (_) => Temp_Pa(),
-                  ));
+                  // MyApp.navigatorKey.currentState?.push(MaterialPageRoute(
+                  //   builder: (_) => Temp_Pa(),
+                  // ));
                 },
                 icon: Icon(
                   Icons.description, // Document icon

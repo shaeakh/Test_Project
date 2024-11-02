@@ -69,7 +69,7 @@ class _All_Meal_TimesState extends State<All_Meal_Times> {
                   ? () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => CountDown(lunchTime: lunchTime!),
+                    builder: (_) => CountDown(breakfastTime: breakfastTime!,lunchTime: lunchTime!,dinnerTime: dinnerTime!,),
                   ),
                 );
               }

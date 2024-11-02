@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import '../widgets/PA/PrescriptionAnalysis.dart';
 
 class Prescription_Analysis extends StatefulWidget {
@@ -13,24 +12,25 @@ class Prescription_Analysis extends StatefulWidget {
 }
 
 class _Prescription_AnalysisState extends State<Prescription_Analysis> {
-  late Future<PrescriptionAnalysis> futurePrescriptionAnalysis; // Declare future variable
+  late Future<PrescriptionAnalysis> futurePrescriptionAnalysis;
 
-  // Fetching data from the response JSON
   Future<PrescriptionAnalysis> fetchPrescriptionAnalysis() async {
-    // Parse the JSON from the responseData
-    final Map<String, dynamic> jsonResponse = jsonDecode(widget.responseData);
-    return PrescriptionAnalysis.fromJson(jsonResponse);
+    final dynamic jsonResponse = widget.responseData;
+
+    if (jsonResponse is List && jsonResponse.isNotEmpty) {
+      return PrescriptionAnalysis.fromJson(jsonResponse[0]);
+    } else if (jsonResponse is Map<String, dynamic>) {
+      return PrescriptionAnalysis.fromJson(jsonResponse);
+    } else {
+      throw Exception("Invalid JSON format. Expected a list or a map.");
+    }
   }
-
-
 
   @override
   void initState() {
     super.initState();
-    // Initialize the future data
     futurePrescriptionAnalysis = fetchPrescriptionAnalysis();
 
-    // Show the AlertDialog 2 seconds after the page loads
     Future.delayed(const Duration(seconds: 2), () {
       showDialog(
         context: context,
@@ -40,21 +40,15 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                  // Handle 'Yes' action
+                  Navigator.of(context).pop();
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.greenAccent, // Set the background color
-                ),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.greenAccent),
                 child: Text("Yes", style: TextStyle(color: Colors.white)),
               ),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent, // Set the background color
-                ),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                  // Handle 'No' action
+                  Navigator.of(context).pop();
                 },
                 child: Text("No", style: TextStyle(color: Colors.white)),
               ),
@@ -68,17 +62,12 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // Number of tabs
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFF03506F),
-          title: Text(
-            "Prescription Analysis",
-            style: TextStyle(color: Colors.white),
-          ),
-          iconTheme: IconThemeData(
-            color: Colors.white, // Sets the icon color to white
-          ),
+          title: Text("Prescription Analysis", style: TextStyle(color: Colors.white)),
+          iconTheme: IconThemeData(color: Colors.white),
           bottom: TabBar(
             tabs: [
               Tab(text: "Medicine"),
@@ -87,7 +76,7 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
             ],
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
-            indicatorColor: Colors.white, // Tab indicator color
+            indicatorColor: Colors.white,
           ),
         ),
         body: FutureBuilder<PrescriptionAnalysis>(
@@ -105,10 +94,7 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Image.asset(
-                        'lib/assets/man.png',
-                        height: 100,
-                      ),
+                      Image.asset('lib/assets/man.png', height: 100),
                       Padding(
                         padding: EdgeInsets.all(10),
                         child: Column(
@@ -116,7 +102,7 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("Name : ${prescriptionData.patientName}"),
-                            Text("Age : ${prescriptionData.age}"),
+                            Text("Age : ${prescriptionData.age.toString()}"), // Ensure age is converted to string
                           ],
                         ),
                       ),
@@ -125,7 +111,6 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        // First tab: Medicine List
                         ListView.builder(
                           itemCount: prescriptionData.data.length,
                           itemBuilder: (context, index) {
@@ -138,9 +123,7 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      "Medicine ${index < 9 ? '0${index + 1}' : '${index + 1}'}: ${medicine.medicineName}",
-                                    ),
+                                    Text("Medicine ${index + 1}: ${medicine.medicineName}"),
                                     Row(
                                       children: <Widget>[
                                         Text("Taking Time: "),
@@ -170,7 +153,6 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
                             );
                           },
                         ),
-                        // Second tab: Health Data
                         ListView.builder(
                           itemCount: prescriptionData.healthData.length,
                           itemBuilder: (context, index) {
@@ -183,7 +165,6 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
                             );
                           },
                         ),
-                        // Third tab: Tests
                         ListView.builder(
                           itemCount: prescriptionData.test.length,
                           itemBuilder: (context, index) {
@@ -209,19 +190,13 @@ class _Prescription_AnalysisState extends State<Prescription_Analysis> {
   }
 
   String convertExpression(String expression) {
-    // Create a mapping for the values
     Map<String, String> map = {
       'no': '1',
       'yes': '2',
       'x': '0',
     };
-
-    // Split the input expression by '-'
     List<String> parts = expression.split('-');
-
-    // Map each part to its corresponding value and join them
     String result = parts.map((part) => map[part] ?? part).join('');
-
     return result;
   }
 }
