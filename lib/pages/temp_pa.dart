@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:poject/pages/Prescription_analysis.dart';
+import 'package:poject/main.dart';
+import 'package:poject/pages/Prescription_analysis.dart'; // Make sure this import path is correct
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../main.dart';
 import 'package:path/path.dart';
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
@@ -18,12 +18,13 @@ class Temp_Pa extends StatefulWidget {
 
 class _Temp_Pa extends State<Temp_Pa> {
   File? selected_image;
-  String s = "";
 
   Future _pickImg_Camera() async {
     final returned_image = await ImagePicker().pickImage(source: ImageSource.camera);
     setState(() {
-      selected_image = File(returned_image!.path);
+      if (returned_image != null) {
+        selected_image = File(returned_image.path);
+      }
     });
   }
 
@@ -38,18 +39,33 @@ class _Temp_Pa extends State<Temp_Pa> {
       imageFile.path,
       contentType: MediaType(mimeTypeData![0], mimeTypeData[1]),
     );
+
     imageUploadRequest.files.add(file);
+
     final streamedResponse = await imageUploadRequest.send();
     var response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode == 200) {
-      print("Image uploaded successfully!");
-      print("Response body: ${response.body}");
-      s = response.body; // Store response for navigation
+      var data = jsonDecode(response.body);
+      var firstItem = data[0]; // Access the first item in the list
+      var age = firstItem['age'];
+      var patientName = firstItem['patientName'];
+      List<dynamic> patientData = firstItem['data'];
+      List<dynamic> healthData = firstItem['healthData'];
+      List<dynamic> test = firstItem['test'];
 
-      MyApp.navigatorKey.currentState?.push(MaterialPageRoute(
-        builder: (_) => Prescription_Analysis(responseData: s),
-      ));
+      // Pass the data to the Prescription_Analysis page
+      MyApp.navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => Prescription_Analysis(
+            age: age,
+            patientName: patientName,
+            patientData: patientData,
+            healthData: healthData,
+            test: test,
+          ),
+        ),
+      );
     } else {
       print("Failed to upload image: ${response.reasonPhrase}");
     }
@@ -92,7 +108,7 @@ class _Temp_Pa extends State<Temp_Pa> {
             ),
             ElevatedButton(
               child: Text("Choose a picture From Gallery"),
-              onPressed: () {},
+              onPressed: () {}, // Implement gallery picker if needed
             ),
             const Text("Please Insert an image"),
           ],
